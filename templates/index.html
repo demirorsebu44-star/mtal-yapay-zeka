@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulu MTAL - Yapay Zekâ Asistanı</title>
+    <!-- Google Font, FontAwesome İkonları ve Animate.css Efekt Kütüphanesi -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Canlı, Rengarenk ve Akıcı Neon Gradient Arka Plan */
+        body {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(-45deg, #7928ca, #ff0080, #00dfd8, #007cf0);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ==========================================
+           1. EFEKTLİ AÇILIŞ (SPLASH) EKRANI
+        ========================================== */
+        .splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 20, 0.92);
+            backdrop-filter: blur(25px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .splash-logo-container {
+            position: relative;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            transition: all 0.6s ease;
+        }
+
+        .splash-icon-main {
+            font-size: 80px;
+            color: #00dfd8;
+            text-shadow: 0 0 30px rgba(0, 223, 216, 0.6);
+            transition: all 0.6s ease;
+        }
+
+        .splash-icon-sub {
+            font-size: 40px;
+            color: #ff0080;
+            align-self: flex-end;
+            text-shadow: 0 0 20px rgba(255, 0, 128, 0.6);
+            transition: all 0.6s ease;
+        }
+
+        .splash-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(to right, #00dfd8, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .splash-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 35px;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        /* İSİM GİRİŞ FORMU KUTUSU */
+        .name-input-box {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            width: 340px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .name-field {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 25px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .name-field:focus {
+            border-color: #00dfd8;
+            box-shadow: 0 0 15px rgba(0, 223, 216, 0.3);
+        }
+
+        .basla-btn, .onayla-btn {
+            background: linear-gradient(45deg, #ff0080, #7928ca, #00dfd8, #007cf0);
+            background-size: 300% 300%;
+            border: none;
+            color: #fff;
+            padding: 14px 45px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0, 223, 216, 0.4);
+            transition: all 0.3s ease;
+            animation: buttonGradient 4s ease infinite;
+        }
+
+        @keyframes buttonGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .basla-btn:hover, .onayla-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(255, 0, 128, 0.8);
+        }
+
+        .splash-exit { opacity: 0; pointer-events: none; }
+        .logo-slide-left { transform: translateX(-250px) rotate(-45deg); opacity: 0; }
+        .logo-slide-right { transform: translateX(250px) rotate(45deg); opacity: 0; }
+
+
+        /* ==========================================
+           2. ANA UYGULAMA (SOHBET VE MENÜ) ALANI
+        ========================================== */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            backdrop-filter: blur(12px);
+            background: rgba(10, 10, 20, 0.2);
+            opacity: 0;
+            transform: scale(0.96);
+            transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .app-active { opacity: 1; transform: scale(1); }
+
+        /* SOL PANEL: SOHBET ÖZETLERİ */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 15, 25, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 25px 15px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #00dfd8;
+            border-bottom: 1px solid rgba(0, 223, 216, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .ozet-listesi {
+            flex: 1;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ozet-item {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 14px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 13.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ozet-item:hover {
+            background: rgba(0, 223, 216, 0.12);
+            border-color: #00dfd8;
+            transform: translateX(5px);
+        }
+
+        /* SAĞ PANEL: TANITIM MENÜSÜ */
+        .info-menu {
+            width: 320px;
+            background: rgba(15, 15, 25, 0.8);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 25px 20px;
+            overflow-y: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .menu-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ff0080;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .menu-card ul {
+            list-style: none;
+            padding-left: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-card li i {
+            color: #00dfd8;
+            margin-right: 6px;
+        }
+
+        /* ORTA PANEL: ANA SOHBET ALANI */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-header {
+            padding: 22px 30px;
+            background: rgba(10, 10, 15, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h1 {
+            font-size: 21px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #00dfd8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* MESAJ BALONLARI */
+        .message {
+            max-width: 75%;
+            padding: 14px 22px;
+            font-size: 15px;
+            line-height: 1.6;
+            animation: slideUp 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007cf0, #00dfd8);
+            align-self: flex-end;
+            border-radius: 25px 25px 4px 25px;
+            box-shadow: 0 6px 20px rgba(0, 223, 216, 0.2);
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.07);
+            align-self: flex-start;
+            border-radius: 25px 25px 25px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Mesaj İçindeki Yüklenen Fotoğraflar */
+        .chat-image {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 15px;
+            margin-top: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* GİRİŞ ALANI VE FOTOĞRAF ÖNİZLEME */
+        .chat-input-container {
+            padding: 25px 30px;
+            background: rgba(10, 10, 15, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Görsel Yükleme Önizleme Paneli (Oval Kapsül) */
+        .preview-container {
+            display: none;
+            align-self: flex-start;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .preview-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        .preview-remove-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff0080;
+            color: #fff;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(255, 0, 128, 0.4);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #ff0080;
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.25);
+        }
+
+        /* Fotoğraf Ekleme İkon Butonu */
+        .file-upload-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            padding: 0 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-upload-label:hover {
+            color: #00dfd8;
+        }
+
+        #foto-input {
+            display: none; /* Gizli input */
+        }
+
+        #mesaj-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 12px 15px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        #gonder-btn {
+            background: linear-gradient(135deg, #ff0080, #7928ca);
+            border: none;
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        #gonder-btn:hover { transform: scale(1.06); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+       1. SİNEMATİK AÇILIŞ (SPLASH) EKRANI
+    ========================================== -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-logo-container" id="splashLogos">
+            <i class="fa-solid fa-brain splash-icon-main animate__animated animate__pulse animate__infinite"></i>
+            <i class="fa-solid fa-graduation-cap splash-icon-sub"></i>
+        </div>
+        <h2 class="splash-title animate__animated animate__fadeInDown">Kulu MTAL Yapay Zekâ Laboratuvarı</h2>
+        <p class="splash-subtitle animate__animated animate__fadeInUp" id="splashText">Selam Ebubekir kanka, başlayalım mı?</p>
+
+        <button class="basla-btn animate__animated animate__bounceIn" id="ilkBaslaBtn" onclick="isimKutusunuAc()">BAŞLA</button>
+
+        <div class="name-input-box" id="nameInputBox">
+            <input type="text" class="name-field" id="kullaniciAdiInput" placeholder="Adınızı ve Soyadınızı Yazın..." onkeypress="handleIsimKeyPress(event)">
+            <button class="onayla-btn" onclick="sistemiSifreliBaslat()">SİSTEME GİRİŞ YAP</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+       2. ANA UYGULAMA (SOHBET + TANITIM MENÜSÜ)
+    ========================================== -->
+    <div class="app-container" id="appContainer">
+
+        <!-- SOL PANEL: SOHBET ÖZETLERİ -->
+        <div class="sidebar">
+            <div class="sidebar-title">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Sohbet Özetleri</span>
+            </div>
+            <ul class="ozet-listesi" id="ozetListesi">
+                <li class="ozet-item"><i class="fa-regular fa-comment"></i> Oturum Açıldı!</li>
+            </ul>
+        </div>
+
+        <!-- ORTA PANEL: ANA SOHBET ALANI -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h1><i class="fa-solid fa-graduation-cap" style="color: #00dfd8;"></i> Kulu MTAL Asistanı</h1>
+                <span class="user-badge" id="kullaniciEtiket">Ziyaretçi Modu</span>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Dinamik Mesaj Alanı -->
+            </div>
+
+            <div class="chat-input-container">
+                <!-- Fotoğraf Önizleme Yuvası -->
+                <div class="preview-container" id="previewContainer">
+                    <img src="" alt="Önizleme" class="preview-image" id="previewImage">
+                    <button class="preview-remove-btn" onclick="fotoğrafİptalEt()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="input-wrapper">
+                    <!-- Dosya Seçme Butonu (Ataç İkonu) -->
+                    <label for="foto-input" class="file-upload-label">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </label>
+                    <input type="file" id="foto-input" accept="image/*" onchange="fotoğrafSeçildi(this)">
+
+                    <input type="text" id="mesaj-input" placeholder="Bir şeyler sor veya fotoğraf ekle kanka..." onkeypress="handleKeyPress(event)">
+
+                    <button id="gonder-btn" onclick="mesajGonder()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ PANEL: PROJE TANITIM MENÜSÜ -->
+        <div class="info-menu">
+            <div class="menu-section">
+                <div class="menu-section-title"><i class="fa-solid fa-circle-info"></i> Proje Hakkında</div>
+                <div class="menu-card">
+                    Bu proje <strong>Kulu MTAL Bilişim Teknolojileri</strong> laboratuvarında geliştirilmiş, Google Gemini API v1 protokolü tabanlı akıllı bir okul asistanıdır.
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title"><i class="fa-solid fa-database"></i> Okul Veri Bankası</div>
+                <div class="menu-card">
+                    <ul>
+                        <li><i class="fa-solid fa-user-graduate"></i> 397 Toplam Öğrenci</li>
+                        <li><i class="fa-solid fa-chalkboard-teacher"></i> 49 Uzman Öğretmen</li>
+                        <li><i class="fa-solid fa-school"></i> 24 Modern Derslik</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Neler Sorabilirsin?</div>
+                <div class="menu-card" style="font-size: 12.5px; color: rgba(255,255,255,0.7);">
+                    "Okulda kaç derslik var?", "Python'da fonksiyon nasıl yazılır?" ya da "Bana bir proje fikri ver kanka" gibi okul veya yazılım soruları sorabilirsin.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SİSTEMİN AKILLI MOTORU -->
+    <script>
+        let globalKullaniciAdi = "Ebubekir";
+        let secilenDosya = null;
+
+        // 1. GİRİŞ EKRANI KONTROLLERİ
+        function isimKutusunuAc() {
+            document.getElementById('ilkBaslaBtn').style.display = 'none';
+            document.getElementById('splashText').innerText = "Lütfen yapay zekânın size hitap edebilmesi için bilgilerinizi girin kanka:";
+            document.getElementById('nameInputBox').style.display = 'flex';
+            document.getElementById('kullaniciAdiInput').focus();
+        }
+
+        function handleIsimKeyPress(event) {
+            if (event.key === 'Enter') {
+                sistemiSifreliBaslat();
+            }
+        }
+
+        function sistemiSifreliBaslat() {
+            const girilenIsim = document.getElementById('kullaniciAdiInput').value.trim();
+            if (girilenIsim !== "") {
+                globalKullaniciAdi = girilenIsim;
+            }
+
+            const mainIcon = document.querySelector('.splash-icon-main');
+            const subIcon = document.querySelector('.splash-icon-sub');
+            const splashScreen = document.getElementById('splashScreen');
+            const appContainer = document.getElementById('appContainer');
+
+            mainIcon.classList.add('logo-slide-left');
+            subIcon.classList.add('logo-slide-right');
+
+            document.getElementById('splashText').style.opacity = '0';
+            document.getElementById('nameInputBox').style.display = 'none';
+            document.querySelector('.splash-title').style.opacity = '0';
+
+            setTimeout(() => {
+                splashScreen.classList.add('splash-exit');
+                appContainer.classList.add('app-active');
+
+                document.getElementById('kullaniciEtiket').innerText = `Kullanıcı: ${globalKullaniciAdi}`;
+                ekranaMesajEkle(`Sisteme başarıyla giriş yaptın ${globalKullaniciAdi} kanka! Kulu MTAL Yapay Zekâ Motoru şu an senin emirlerine amade. Bana okul verilerini ya da bir fotoğraf atıp onun hakkında sorular sorabilirsin!`, 'bot-message');
+            }, 600);
+        }
+
+        // 2. FOTOĞRAF SEÇME VE ÖNİZLEME İŞLEMLERİ
+        function fotoğrafSeçildi(input) {
+            if (input.files && input.files[0]) {
+                secilenDosya = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                }
+
+                reader.readAsDataURL(secilenDosya);
+            }
+        }
+
+        function fotoğrafİptalEt() {
+            secilenDosya = null;
+            document.getElementById('foto-input').value = "";
+            document.getElementById('previewContainer').style.display = 'none';
+        }
+
+        // 3. MESAJLAŞMA VE VERİ AKTARIMI (DOSYA DESTEKLİ)
+        const chatMessages = document.getElementById('chatMessages');
+        const mesajInput = document.getElementById('mesaj-input');
+        const ozetListesi = document.getElementById('ozetListesi');
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                mesajGonder();
+            }
+        }
+
+        function mesajGonder() {
+            const mesajMetni = mesajInput.value.trim();
+
+            // Eğer hem mesaj boşsa hem de dosya seçilmediyse hiçbir şey yapma
+            if (mesajMetni === '' && !secilenDosya) return;
+
+            // FormData nesnesi oluşturarak verileri paketliyoruz
+            const formData = new FormData();
+
+            // Python'a ismimizle birlikte mesajı paketle
+            formData.append('mesaj', `(Kullanıcı adı: ${globalKullaniciAdi}) ` + mesajMetni);
+
+            if (secilenDosya) {
+                formData.append('fotoğraf', secilenDosya);
+            }
+
+            // Ekrana kullanıcının attığı mesajı/görseli bas
+            ekranaKullaniciMesajiBas(mesajMetni, secilenDosya);
+
+            // Input alanlarını hemen sıfırla
+            mesajInput.value = '';
+            if(mesajMetni !== '') {
+                ozetPanelineEkle(mesajMetni);
+            } else if(secilenDosya) {
+                ozetPanelineEkle("🖼️ Fotoğraf gönderildi");
+            }
+            fotoğrafİptalEt();
+
+            // API'ye Gönderim (JSON yerine multipart/form-data gidiyor artık)
+            fetch('/chat', {
+                method: 'POST',
+                body: formData // İçinde hem metin hem de dosya barındırır
+            })
+            .then(response => response.json())
+            .then(data => {
+                ekranaMesajEkle(data.cevap, 'bot-message');
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                ekranaMesajEkle('Bağlantı kesildi kanka, terminali kontrol et veya backend kodunun dosya altyapısını kontrol et.', 'bot-message');
+            });
+        }
+
+        function ekranaKullaniciMesajiBas(metin, dosya) {
+            const mesajDiv = document.createElement('div');
+            mesajDiv.className = 'message user-message';
+
+            // Eğer metin varsa ekle
+            if (metin !== '') {
+                const textSpan = document.createElement('span');
+                textSpan.innerText = metin;
+                mesajDiv.appendChild(textSpan);
+            }
+
+            // Eğer dosya yüklenmişse görsel olarak balonun içine bas
+            if (dosya) {
+                const img = document.createElement('img');
+                img.src = document.getElementById('previewImage').src;
+                img.className = 'chat-image';
+                mesajDiv.appendChild(img);
+            }
+
+            chatMessages.appendChild(mesajDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function ekranaMesajEkle(metin, sınıfAdı) {
+            const mesajDiv = document.createElement('div');
+            mesajDiv.className = `message ${sınıfAdı}`;
+            mesajDiv.innerText = metin;
+            chatMessages.appendChild(mesajDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function ozetPanelineEkle(metin) {
+            let temizMetin = metin.replace(/\(Kullanıcı adı:.*?\)\s*/, "");
+            let ozetBaslik = temizMetin.length > 18 ? temizMetin.substring(0, 18) + '...' : temizMetin;
+
+            const yeniOzet = document.createElement('li');
+            yeniOzet.className = 'ozet-item';
+            yeniOzet.innerHTML = `<i class="fa-regular fa-comment"></i> ${ozetBaslik}`;
+
+            if (ozetListesi.firstChild) {
+                ozetListesi.insertBefore(yeniOzet, ozetListesi.firstChild);
+            } else {
+                ozetListesi.appendChild(yeniOzet);
+            }
+        }
+    </script>
+</body>
+</html>
