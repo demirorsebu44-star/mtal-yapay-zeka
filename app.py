@@ -9,7 +9,7 @@ app = Flask(__name__)
 # ==========================================
 # Kanka, buradaki "KENDI_API_ANAHTARIN" yazan yere Google AI Studio'dan aldığın anahtarı yapıştır.
 # Sunum günü kota sorunu yaşamamak için buraya yedek/taze bir anahtar koyabilirsin.
-API_KEY = "AQ.Ab8RN6LaMSK4ZWiKeWz39-Tuuh69EYEAplSZA9NRZ6V2throZw"
+API_KEY = "AQ.Ab8RN6JIbNtjyGquAQ2ewREYC6YvYmwa2BBoUciuapKPcmKrFw"
 genai.configure(api_key=API_KEY)
 
 # Gemini 2.5 Flash modelimizi tanımlıyoruz
