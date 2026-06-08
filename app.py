@@ -21,13 +21,14 @@ def chat():
         if not user_message:
             return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
 
-        # 🛠️ GUNICORN ÇÖKMESİNİ ENGELLEYEN KISIM:
-        # İstemciyi global yerine tam burada, fonksiyon içinde oluşturuyoruz.
-        # Böylece proxy çakışması ve thread (iş parçacığı) hataları tamamen engelleniyor.
-        custom_http_client = httpx.Client(proxies=None)
+        # 🛠️ KÖKTEN ÇÖZÜM: 
+        # Hiçbir parametre (proxies vs.) vermeden, tamamen boş ve düz bir httpx istemcisi oluşturuyoruz.
+        # Bu sayede httpx sürümün ne olursa olsun asla hata vermez.
+        custom_client = httpx.Client()
+        
         client = Groq(
             api_key=API_KEY,
-            http_client=custom_http_client
+            http_client=custom_client
         )
 
         # Llama 3 modelimizi tetikliyoruz
@@ -44,7 +45,7 @@ def chat():
         return jsonify({'cevap': bot_response})
 
     except Exception as e:
-        # Eğer bir hata oluşursa gunicorn çökmesin, hatayı arayüze loglasın
+        # Sunucu çökmesin, hatayı arayüze göndersin
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
