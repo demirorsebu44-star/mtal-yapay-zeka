@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kulu MTAL - Yapay Zekâ Asistanı</title>
+    <!-- Google Font, FontAwesome İkonları ve Animate.css Efekt Kütüphanesi -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -378,6 +379,11 @@
             animation: fadeIn 0.3s ease;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .preview-image {
             width: 60px;
             height: 60px;
@@ -471,6 +477,9 @@
 </head>
 <body>
 
+    <!-- ==========================================
+       1. SİNEMATİK AÇILIŞ (SPLASH) EKRANI
+    ========================================== -->
     <div class="splash-screen" id="splashScreen">
         <div class="splash-logo-container" id="splashLogos">
             <i class="fa-solid fa-brain splash-icon-main animate__animated animate__pulse animate__infinite"></i>
@@ -487,8 +496,12 @@
         </div>
     </div>
 
+    <!-- ==========================================
+       2. ANA UYGULAMA (SOHBET + TANITIM MENÜSÜ)
+    ========================================== -->
     <div class="app-container" id="appContainer">
 
+        <!-- SOL PANEL: SOHBET ÖZETLERİ -->
         <div class="sidebar">
             <div class="sidebar-title">
                 <i class="fa-solid fa-layer-group"></i>
@@ -499,6 +512,7 @@
             </ul>
         </div>
 
+        <!-- ORTA PANEL: ANA SOHBET ALANI -->
         <div class="chat-area">
             <div class="chat-header">
                 <h1><i class="fa-solid fa-graduation-cap" style="color: #00dfd8;"></i> Kulu MTAL Asistanı</h1>
@@ -506,15 +520,18 @@
             </div>
 
             <div class="chat-messages" id="chatMessages">
-                </div>
+                <!-- Dinamik Mesaj Alanı -->
+            </div>
 
             <div class="chat-input-container">
+                <!-- Fotoğraf Önizleme Yuvası -->
                 <div class="preview-container" id="previewContainer">
                     <img src="" alt="Önizleme" class="preview-image" id="previewImage">
                     <button class="preview-remove-btn" onclick="fotoğrafİptalEt()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
                 <div class="input-wrapper">
+                    <!-- Dosya Seçme Butonu (Ataç İkonu) -->
                     <label for="foto-input" class="file-upload-label">
                         <i class="fa-solid fa-paperclip"></i>
                     </label>
@@ -529,11 +546,12 @@
             </div>
         </div>
 
+        <!-- SAĞ PANEL: PROJE TANITIM MENÜSÜ -->
         <div class="info-menu">
             <div class="menu-section">
                 <div class="menu-section-title"><i class="fa-solid fa-circle-info"></i> Proje Hakkında</div>
                 <div class="menu-card">
-                    Bu proje <strong>Kulu MTAL Bilişim Teknolojileri</strong> laboratuvarında geliştirilmiş, Groq Llama 3 protokolü tabanlı akıllı bir okul asistanıdır.
+                    Bu proje <strong>Kulu MTAL Bilişim Teknolojileri</strong> laboratuvarında geliştirilmiş, Google Gemini API v1 protokolü tabanlı akıllı bir okul asistanıdır.
                 </div>
             </div>
 
@@ -558,6 +576,7 @@
 
     </div>
 
+    <!-- SİSTEMİN AKILLI MOTORU -->
     <script>
         let globalKullaniciAdi = "Ebubekir";
         let secilenDosya = null;
@@ -599,7 +618,7 @@
                 appContainer.classList.add('app-active');
 
                 document.getElementById('kullaniciEtiket').innerText = `Kullanıcı: ${globalKullaniciAdi}`;
-                ekranaMesajEkle(`Sisteme başarıyla giriş yaptın ${globalKullaniciAdi} kanka! Kulu MTAL Yapay Zekâ Motoru şu an senin emirlerine amade. Bana okul verilerini veya yazılımla alakalı sorularını yöneltebilirsin!`, 'bot-message');
+                ekranaMesajEkle(`Sisteme başarıyla giriş yaptın ${globalKullaniciAdi} kanka! Kulu MTAL Yapay Zekâ Motoru şu an senin emirlerine amade. Bana okul verilerini ya da bir fotoğraf atıp onun hakkında sorular sorabilirsin!`, 'bot-message');
             }, 600);
         }
 
@@ -644,11 +663,10 @@
             // FormData nesnesi oluşturarak verileri paketliyoruz
             const formData = new FormData();
 
-            // Python backend tarafının beklediği 'mesaj' anahtarına veriyi ekliyoruz
+            // Python'a ismimizle birlikte mesajı paketle
             formData.append('mesaj', `(Kullanıcı adı: ${globalKullaniciAdi}) ` + mesajMetni);
 
             if (secilenDosya) {
-                // Python backend tarafının beklediği 'fotoğraf' anahtarına dosyayı ekliyoruz
                 formData.append('fotoğraf', secilenDosya);
             }
 
@@ -671,28 +689,23 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Backend 'cevap' anahtarıyla dönüş yaptığı için data.cevap olarak okuyoruz
-                if (data.cevap) {
-                    ekranaMesajEkle(data.cevap, 'bot-message');
-                } else if (data.error) {
-                    ekranaMesajEkle('Hata: ' + data.error, 'bot-message');
-                }
+                ekranaMesajEkle(data.cevap, 'bot-message');
             })
             .catch(error => {
                 console.error('Hata:', error);
-                ekranaMesajEkle('Bağlantı kesildi kanka, terminali veya backend kodunu kontrol et.', 'bot-message');
+                ekranaMesajEkle('Bağlantı kesildi kanka, terminali kontrol et veya backend kodunun dosya altyapısını kontrol et.', 'bot-message');
             });
         }
 
         function ekranaKullaniciMesajiBas(metin, dosya) {
             const mesajDiv = document.createElement('div');
-            const user_msg = metin.replace(/\(Kullanıcı adı:.*?\)\s*/, "");
+            const previewContainer = document.getElementById('previewContainer');
             mesajDiv.className = 'message user-message';
 
             // Eğer metin varsa ekle
-            if (user_msg !== '') {
+            if (metin !== '') {
                 const textSpan = document.createElement('span');
-                textSpan.innerText = user_msg;
+                textSpan.innerText = metin;
                 mesajDiv.appendChild(textSpan);
             }
 
