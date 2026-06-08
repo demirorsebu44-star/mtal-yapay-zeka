@@ -21,9 +21,9 @@ def chat():
         if not user_message:
             return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
 
-        # 🛠️ KÖKTEN ÇÖZÜM: 
-        # Hiçbir parametre (proxies vs.) vermeden, tamamen boş ve düz bir httpx istemcisi oluşturuyoruz.
-        # Bu sayede httpx sürümün ne olursa olsun asla hata vermez.
+        # 🛠️ HATAYI KÖKTEN ÇÖZEN KISIM:
+        # Hiçbir parametre (proxies vb.) içermeyen, en yalın httpx istemcisini fonksiyon içinde yaratıyoruz.
+        # Böylece Gunicorn başlarken asla takılmıyor ve httpx sürümün ne olursa olsun uyuşmazlık çıkmıyor.
         custom_client = httpx.Client()
         
         client = Groq(
@@ -45,7 +45,7 @@ def chat():
         return jsonify({'cevap': bot_response})
 
     except Exception as e:
-        # Sunucu çökmesin, hatayı arayüze göndersin
+        # Hata durumunda uygulamanın çökmesini engelliyoruz, hatayı ekrana basıyoruz
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
