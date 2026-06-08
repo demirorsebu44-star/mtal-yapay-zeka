@@ -8,16 +8,6 @@ app = Flask(__name__)
 # 🔐 Aktif Groq API Anahtarın
 API_KEY = "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"
 
-# 🛠️ HATAYI ÇÖZEN KISIM: 
-# Groq'un içindeki 'proxies' çakışmasını engellemek için temiz bir httpx Client oluşturuyoruz.
-custom_http_client = httpx.Client(proxies=None)
-
-# Groq istemcisini bu özel, proxy taşımayan temiz istemciyle ayağa kaldırıyoruz.
-client = Groq(
-    api_key=API_KEY,
-    http_client=custom_http_client
-)
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -30,6 +20,15 @@ def chat():
         
         if not user_message:
             return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
+
+        # 🛠️ GUNICORN ÇÖKMESİNİ ENGELLEYEN KISIM:
+        # İstemciyi global yerine tam burada, fonksiyon içinde oluşturuyoruz.
+        # Böylece proxy çakışması ve thread (iş parçacığı) hataları tamamen engelleniyor.
+        custom_http_client = httpx.Client(proxies=None)
+        client = Groq(
+            api_key=API_KEY,
+            http_client=custom_http_client
+        )
 
         # Llama 3 modelimizi tetikliyoruz
         completion = client.chat.completions.create(
@@ -45,6 +44,7 @@ def chat():
         return jsonify({'cevap': bot_response})
 
     except Exception as e:
+        # Eğer bir hata oluşursa gunicorn çökmesin, hatayı arayüze loglasın
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
