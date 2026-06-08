@@ -12,26 +12,33 @@ API_KEY = "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"
 def index():
     return render_template('index.html')
 
+# 📱 HEM WEB HEM MOBİL DESTEKLİ CHAT ENDPOINT'I
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
-        # Arayüzden gelen mesajı alıyoruz
-        user_message = request.form.get('mesaj', '')
+        user_message = ""
+
+        # 1. Yol: Eğer istek Mobil Uygulamadan JSON olarak geldiyse
+        if request.is_json:
+            data = request.get_json()
+            user_message = data.get('mesaj', '')
         
+        # 2. Yol: Eğer istek mevcut Web Arayüzünden Form verisi olarak geldiyse
+        else:
+            user_message = request.form.get('mesaj', '')
+
+        # Mesaj kontrolü
         if not user_message:
             return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
 
-        # 🛠️ GUNICORN & HTTPX ÇAKIŞMA ÇÖZÜMÜ:
-        # Parametresiz, temiz bir httpx istemcisini fonksiyon içinde yaratarak uyuşmazlıkları engelliyoruz.
+        # 🛠️ HTTPX İstemci Yapılandırması
         custom_client = httpx.Client()
-        
         client = Groq(
             api_key=API_KEY,
             http_client=custom_client
         )
 
-        # 🚀 GÜNCEL MODEL:
-        # Kapatılan eski model yerine Groq'un aktif olarak desteklediği güncel modeli tetikliyoruz.
+        # 🚀 Llama 3.1 Modeli Tetikleme
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
@@ -42,10 +49,11 @@ def chat():
         )
         
         bot_response = completion.choices[0].message.content
+        
+        # 🎯 Standart JSON Çıktısı (Hem Mobil Hem Web Anlar)
         return jsonify({'cevap': bot_response})
 
     except Exception as e:
-        # Sunucunun çökmesini önlemek için hatayı yakalayıp arayüze güvenli bir şekilde basıyoruz
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
