@@ -4,46 +4,45 @@ from groq import Groq
 
 app = Flask(__name__)
 
-# 🔐 Yeni Groq API Anahtarın (Sorunsuz Çalışan Standart API Key Formatı)
+# 🔐 Çalışan Gerçek Groq API Anahtarın
 API_KEY = "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"
 
-# Groq İstemcisini doğrudan bu anahtarla tetikliyoruz
+# Groq istemcisini ayağa kaldırıyoruz
 client = Groq(api_key=API_KEY)
 
 @app.route('/')
 def index():
-    # Templates klasörünün altındaki index.html dosyasını ekrana basar
+    # Templates/index.html dosyasını ekrana basar
     return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
-        # Arayüzden (index.html) gelen mesajı yakalıyoruz
+        # HTML arayüzünden gelen metin mesajını alıyoruz
         user_message = request.form.get('message', '')
         
-        if not user_message:
-            return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
+        # HTML arayüzünden gelen bir fotoğraf var mı diye kontrol ediyoruz
+        uploaded_file = request.files.get('image')
 
-        # En kararlı ve hızlı çalışan Llama 3 modelini çağırıyoruz
+        if not user_message and not uploaded_file:
+            return jsonify({'error': 'Boş mesaj gönderemezsin kanka.'}), 400
+
+        # Eğer sadece düz metin mesajı geldiyse bu blok çalışır
         completion = client.chat.completions.create(
             model="llama3-8b-8192",
             messages=[
                 {"role": "user", "content": user_message}
             ],
             temperature=0.7,
-            max_tokens=1024,
+            max_tokens=1024
         )
         
-        # Yapay zekanın ürettiği cevabı ayıklıyoruz
         bot_response = completion.choices[0].message.content
-        
-        # Cevabı arayüze JSON formatında güvenle geri gönderiyoruz
         return jsonify({'response': bot_response})
 
     except Exception as e:
-        # Herhangi bir hata oluşursa sunucunun çökmesini engeller, hatayı arayüze yansıtır
+        # Kodun çökmesini engeller, hatayı güvenli bir şekilde arayüze basar
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Lokal testler için debug modunu aktif ediyoruz
     app.run(debug=True)
