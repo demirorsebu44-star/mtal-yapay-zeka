@@ -21,9 +21,8 @@ def chat():
         if not user_message:
             return jsonify({'error': 'Mesaj boş olamaz kanka.'}), 400
 
-        # 🛠️ HATAYI KÖKTEN ÇÖZEN KISIM:
-        # Hiçbir parametre (proxies vb.) içermeyen, en yalın httpx istemcisini fonksiyon içinde yaratıyoruz.
-        # Böylece Gunicorn başlarken asla takılmıyor ve httpx sürümün ne olursa olsun uyuşmazlık çıkmıyor.
+        # 🛠️ GUNICORN & HTTPX ÇAKIŞMA ÇÖZÜMÜ:
+        # Parametresiz, temiz bir httpx istemcisini fonksiyon içinde yaratarak uyuşmazlıkları engelliyoruz.
         custom_client = httpx.Client()
         
         client = Groq(
@@ -31,9 +30,10 @@ def chat():
             http_client=custom_client
         )
 
-        # Llama 3 modelimizi tetikliyoruz
+        # 🚀 GÜNCEL MODEL:
+        # Kapatılan eski model yerine Groq'un aktif olarak desteklediği güncel modeli tetikliyoruz.
         completion = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "user", "content": user_message}
             ],
@@ -45,7 +45,7 @@ def chat():
         return jsonify({'cevap': bot_response})
 
     except Exception as e:
-        # Hata durumunda uygulamanın çökmesini engelliyoruz, hatayı ekrana basıyoruz
+        # Sunucunun çökmesini önlemek için hatayı yakalayıp arayüze güvenli bir şekilde basıyoruz
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
