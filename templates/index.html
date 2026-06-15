@@ -35,7 +35,7 @@
         }
 
         /* ==========================================
-           1. EFEKTLİ AÇILIŞ (SPLASH) EKRANI
+            1. EFEKTLİ AÇILIŞ (SPLASH) EKRANI
         ========================================== */
         .splash-screen {
             position: absolute;
@@ -162,7 +162,7 @@
 
 
         /* ==========================================
-           2. ANA UYGULAMA (SOHBET VE MENÜ) ALANI
+            2. ANA UYGULAMA (SOHBET VE MENÜ) ALANI
         ========================================== */
         .app-container {
             display: flex;
@@ -519,7 +519,7 @@
             </div>
 
             <div class="chat-messages" id="chatMessages">
-                </div>
+            </div>
 
             <div class="chat-input-container">
                 <div class="preview-container" id="previewContainer">
@@ -574,9 +574,8 @@
     <script>
         let globalKullaniciAdi = "Ziyaretçi";
         let secilenDosya = null;
-        let adminAsamasi = false; // Admin akışında mıyız kontrolü
+        let adminAsamasi = false; 
 
-        // 1. GİRİŞ EKRANI AKILLI KONTROLLERİ
         function isimKutusunuAc() {
             document.getElementById('ilkBaslaBtn').style.display = 'none';
             document.getElementById('splashText').innerText = "Yapay zekânın size hitap edebilmesi için bilgilerinizi girin kanka:";
@@ -595,10 +594,8 @@
             const errorText = document.getElementById('inputError');
             const deger = inputField.value.trim();
 
-            // Eğer ilk aşamadaysak (İsim Girişi)
             if (!adminAsamasi) {
                 if (deger === "") {
-                    // Boş bırakıldıysa hata göster
                     errorText.innerText = "Giriş yapılmadı! Lütfen boş bırakmayın kanka.";
                     errorText.style.display = "block";
                     return;
@@ -606,7 +603,6 @@
 
                 errorText.style.display = "none";
 
-                // Eğer "admin" yazıldıysa şifre sorma aşamasına geç
                 if (deger.toLowerCase() === "admin") {
                     adminAsamasi = true;
                     inputField.value = "";
@@ -617,12 +613,10 @@
                     return;
                 }
 
-                // 1 harf bile olsa normal kullanıcı olarak devam et
                 globalKullaniciAdi = deger;
                 sistemiAnaEkranaTasi(false);
 
             } else {
-                // Eğer admin aşamasındaysak (Şifre Kontrolü)
                 if (deger === "12345") {
                     errorText.style.display = "none";
                     globalKullaniciAdi = "Kurucu Admin";
@@ -652,7 +646,6 @@
                 splashScreen.classList.add('splash-exit');
                 appContainer.classList.add('app-active');
 
-                // Kullanıcı etiketini güncelle
                 if (isAdmin) {
                     document.getElementById('kullaniciEtiket').innerText = `⚡ Yetki: ${globalKullaniciAdi}`;
                     document.getElementById('kullaniciEtiket').style.color = "#ff0080";
@@ -671,12 +664,10 @@
             }, 600);
         }
 
-        // ADMİN ARAYÜZÜNÜ TETİKLEYEN ÖZEL FONKSİYON
         function adminArayuzunuEtkinlestir() {
             const sagMenu = document.getElementById('sagMenuPanel');
             sagMenu.classList.add('admin-mode-active');
             
-            // Sağ taraftaki menü içeriklerini admin kontrol butonlarına dönüştürüyoruz
             document.getElementById('projeKart').innerHTML = `
                 <span style="color:#00dfd8; font-weight:600;">[SİSTEM LOGLARI AKTİF]</span><br>
                 Terminal bağlantısı stabil.<br>
@@ -691,7 +682,6 @@
             `;
         }
 
-        // 2. FOTOĞRAF SEÇME VE ÖNİZLEME İŞLEMLERİ
         function fotoğrafSeçildi(input) {
             if (input.files && input.files[0]) {
                 secilenDosya = input.files[0];
@@ -710,7 +700,6 @@
             document.getElementById('previewContainer').style.display = 'none';
         }
 
-        // 3. MESAJLAŞMA VE VERİ AKTARIMI
         const chatMessages = document.getElementById('chatMessages');
         const mesajInput = document.getElementById('mesaj-input');
         const ozetListesi = document.getElementById('ozetListesi');
@@ -798,33 +787,29 @@
             }
         }
 
-        // BOTA ENTEGRE SESLENDİRME MOTORU (TTS)
-       // BOTA ENTEGRE SESLENDİRME MOTORU (TTS) - GÜNCEL VE HATASIZ
-function botuSeslendir(metin) {
-    // 1. Veri kontrolü: Eğer metin boş veya tanımsızsa işlemi durdur
-    if (!metin || typeof metin !== 'string') {
-        console.warn("Seslendirilecek metin geçersiz, atlandı.");
-        return;
-    }
+        function botuSeslendir(metin) {
+            if (!metin || typeof metin !== 'string') return;
 
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        
-        // 2. Metni temizle
-        let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
-        
-        const utterance = new SpeechSynthesisUtterance(temizMetin);
-        utterance.lang = 'tr-TR';
-        utterance.rate = 1.15;
-        utterance.pitch = 1.0;
-        
-        const sesler = window.speechSynthesis.getVoices();
-        const turkceSes = sesler.find(ses => ses.lang.includes('tr'));
-        if (turkceSes) utterance.voice = turkceSes;
-        
-        window.speechSynthesis.speak(utterance);
-    }
-}
+            const synth = window.speechSynthesis;
+            synth.cancel();
+
+            let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
+            const utterance = new SpeechSynthesisUtterance(temizMetin);
+            utterance.lang = 'tr-TR';
+            utterance.rate = 1.15;
+            utterance.pitch = 1.0;
+            
+            const sesleriYukle = () => {
+                const sesler = synth.getVoices();
+                const turkceSes = sesler.find(ses => ses.lang.includes('tr'));
+                if (turkceSes) utterance.voice = turkceSes;
+                synth.speak(utterance);
+            };
+
+            if (synth.getVoices().length !== 0) {
+                sesleriYukle();
+            } else {
+                synth.onvoiceschanged = sesleriYukle;
             }
         }
     </script>
