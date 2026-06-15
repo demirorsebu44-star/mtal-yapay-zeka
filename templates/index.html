@@ -799,18 +799,32 @@
         }
 
         // BOTA ENTEGRE SESLENDİRME MOTORU (TTS)
-        function botuSeslendir(metin) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
-                const utterance = new SpeechSynthesisUtterance(temizMetin);
-                utterance.lang = 'tr-TR';
-                utterance.rate = 1.15;
-                utterance.pitch = 1.0;
-                const sesler = window.speechSynthesis.getVoices();
-                const turkceSes = sesler.find(ses => ses.lang.includes('tr'));
-                if (turkceSes) utterance.voice = turkceSes;
-                window.speechSynthesis.speak(utterance);
+       // BOTA ENTEGRE SESLENDİRME MOTORU (TTS) - GÜNCEL VE HATASIZ
+function botuSeslendir(metin) {
+    // 1. Veri kontrolü: Eğer metin boş veya tanımsızsa işlemi durdur
+    if (!metin || typeof metin !== 'string') {
+        console.warn("Seslendirilecek metin geçersiz, atlandı.");
+        return;
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        
+        // 2. Metni temizle
+        let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
+        
+        const utterance = new SpeechSynthesisUtterance(temizMetin);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 1.15;
+        utterance.pitch = 1.0;
+        
+        const sesler = window.speechSynthesis.getVoices();
+        const turkceSes = sesler.find(ses => ses.lang.includes('tr'));
+        if (turkceSes) utterance.voice = turkceSes;
+        
+        window.speechSynthesis.speak(utterance);
+    }
+}
             }
         }
     </script>
