@@ -811,7 +811,17 @@
                 ozetListesi.appendChild(yeniOzet);
             }
         }
-
+       function botuSeslendir(metin) {
+    // KONTROL: Metin boşsa veya tanımsızsa fonksiyonu hemen durdur
+    if (!metin || typeof metin !== 'string') {
+        console.log("Seslendirilecek metin boş, atlanıyor.");
+        return;
+    }
+    
+    // Senin mevcut .replace() kodların burada kalabilir
+    let temizMetin = metin.replace(/[*#]/g, ''); 
+    // ... geri kalan seslendirme kodların
+}
         // BOTA ENTEGRE SESLENDİRME MOTORU (TTS)
         function botuSeslendir(metin) {
             if ('speechSynthesis' in window) {
