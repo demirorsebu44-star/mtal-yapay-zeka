@@ -7,47 +7,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { display: flex; height: 100vh; background: linear-gradient(-45deg, #7928ca, #ff0080, #00dfd8, #007cf0); background-size: 400% 400%; animation: gradientBG 12s ease infinite; color: #fff; overflow: hidden; position: relative; }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* SPLASH EKRANI */
         .splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 20, 0.92); backdrop-filter: blur(25px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
+        .splash-logo-container { position: relative; margin-bottom: 25px; display: flex; gap: 20px; transition: all 0.6s ease; }
+        .splash-icon-main { font-size: 80px; color: #00dfd8; text-shadow: 0 0 30px rgba(0, 223, 216, 0.6); }
+        .splash-icon-sub { font-size: 40px; color: #ff0080; align-self: flex-end; text-shadow: 0 0 20px rgba(255, 0, 128, 0.6); }
+        .splash-title { font-size: 32px; font-weight: 600; margin-bottom: 10px; background: linear-gradient(to right, #00dfd8, #ff0080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .splash-subtitle { font-size: 18px; color: rgba(255, 255, 255, 0.8); margin-bottom: 35px; font-weight: 300; }
         .name-input-box { display: none; flex-direction: column; gap: 15px; width: 340px; }
-        .name-field { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 25px; border-radius: 30px; color: #fff; text-align: center; outline: none; }
-        .app-container { display: flex; width: 100%; height: 100vh; opacity: 0; transform: scale(0.96); transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
+        .name-field { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 25px; border-radius: 30px; color: #fff; font-size: 16px; text-align: center; outline: none; }
+        .name-field:focus { border-color: #00dfd8; }
+        .error-message { color: #ff0080; font-size: 13.5px; text-align: center; display: none; font-weight: 600; }
+        .basla-btn, .onayla-btn { background: linear-gradient(45deg, #ff0080, #7928ca, #00dfd8, #007cf0); border: none; color: #fff; padding: 14px 45px; font-size: 18px; font-weight: 600; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
+        
+        /* ANA UYGULAMA */
+        .app-container { display: flex; width: 100%; height: 100vh; backdrop-filter: blur(12px); background: rgba(10, 10, 20, 0.2); opacity: 0; transform: scale(0.96); transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
         .app-active { opacity: 1; transform: scale(1); }
-        .sidebar { width: 280px; background: rgba(15, 15, 25, 0.8); backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.08); padding: 25px 15px; }
+        .sidebar { width: 280px; background: rgba(15, 15, 25, 0.8); border-right: 1px solid rgba(255, 255, 255, 0.08); padding: 25px 15px; }
         .chat-area { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.15); }
         .chat-messages { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .message { max-width: 75%; padding: 14px 22px; font-size: 15px; border-radius: 20px; }
-        .user-message { background: linear-gradient(135deg, #007cf0, #00dfd8); align-self: flex-end; }
-        .bot-message { background: rgba(255, 255, 255, 0.07); align-self: flex-start; }
-        .chat-input-container { padding: 25px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 10px; }
-        .input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.06); border-radius: 40px; padding: 10px; }
-        #mesaj-input { flex: 1; background: transparent; border: none; color: #fff; padding: 10px; outline: none; }
-        #gonder-btn { background: #ff0080; border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-        .splash-exit { opacity: 0; pointer-events: none; }
+        .message { max-width: 75%; padding: 14px 22px; font-size: 15px; line-height: 1.6; }
+        .user-message { background: linear-gradient(135deg, #007cf0, #00dfd8); align-self: flex-end; border-radius: 25px 25px 4px 25px; }
+        .bot-message { background: rgba(255, 255, 255, 0.07); align-self: flex-start; border-radius: 25px 25px 25px 4px; border: 1px solid rgba(255, 255, 255, 0.06); }
+        .chat-input-container { padding: 25px 30px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 12px; }
+        .input-wrapper { display: flex; align-items: center; background: rgba(255, 255, 255, 0.06); border-radius: 40px; padding: 6px 12px; }
+        #mesaj-input { flex: 1; background: transparent; border: none; outline: none; padding: 12px 15px; color: #fff; font-size: 16px; }
+        #gonder-btn { background: linear-gradient(135deg, #ff0080, #7928ca); border: none; color: #fff; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body>
+
     <div class="splash-screen" id="splashScreen">
+        <div class="splash-logo-container" id="splashLogos">
+            <i class="fa-solid fa-brain splash-icon-main"></i>
+            <i class="fa-solid fa-graduation-cap splash-icon-sub"></i>
+        </div>
         <h2 class="splash-title">Kulu MTAL Yapay Zekâ Laboratuvarı</h2>
+        <p class="splash-subtitle" id="splashText">Selam kanka, başlayalım mı?</p>
         <button class="basla-btn" id="ilkBaslaBtn" onclick="isimKutusunuAc()">BAŞLA</button>
         <div class="name-input-box" id="nameInputBox">
-            <input type="text" class="name-field" id="kullaniciAdiInput" placeholder="Adınızı yazın...">
-            <button class="onayla-btn" onclick="kontrolVeIlerle()">SİSTEME GİRİŞ YAP</button>
+            <input type="text" class="name-field" id="kullaniciAdiInput" placeholder="Adınızı Yazın...">
+            <p class="error-message" id="inputError">Giriş yapılmadı!</p>
+            <button class="onayla-btn" onclick="kontrolVeIlerle()">GİRİŞ YAP</button>
         </div>
     </div>
 
     <div class="app-container" id="appContainer">
-        <div class="sidebar">
-            <ul id="ozetListesi"></ul>
-        </div>
+        <div class="sidebar" id="ozetListesi"></div>
         <div class="chat-area">
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-container">
                 <div class="input-wrapper">
-                    <input type="text" id="mesaj-input" placeholder="Bir şeyler sor kanka..." onkeypress="handleKeyPress(event)">
+                    <input type="text" id="mesaj-input" placeholder="Bir şeyler yaz kanka..." onkeypress="if(event.key==='Enter') mesajGonder()">
                     <button id="gonder-btn" onclick="mesajGonder()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -56,64 +73,65 @@
 
     <script>
         let globalKullaniciAdi = "Ziyaretçi";
-        
+
         function isimKutusunuAc() {
             document.getElementById('ilkBaslaBtn').style.display = 'none';
             document.getElementById('nameInputBox').style.display = 'flex';
         }
 
         function kontrolVeIlerle() {
-            const val = document.getElementById('kullaniciAdiInput').value.trim();
-            if (val) {
-                globalKullaniciAdi = val;
-                document.getElementById('splashScreen').classList.add('splash-exit');
-                document.getElementById('appContainer').classList.add('app-active');
-            }
-        }
-
-        function botuSeslendir(metin) {
-            // Hata engelleme: Sadece string ise ve boş değilse çalıştır
-            if (!metin || typeof metin !== 'string') return;
-            
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
-                const utterance = new SpeechSynthesisUtterance(temizMetin);
-                utterance.lang = 'tr-TR';
-                window.speechSynthesis.speak(utterance);
-            }
+            let val = document.getElementById('kullaniciAdiInput').value.trim();
+            if(!val) { document.getElementById('inputError').style.display = 'block'; return; }
+            globalKullaniciAdi = val;
+            document.getElementById('splashScreen').classList.add('splash-exit');
+            document.getElementById('appContainer').classList.add('app-active');
+            ekranaMesajEkle("Hoş geldin " + globalKullaniciAdi + " kanka!", 'bot-message');
         }
 
         async function mesajGonder() {
-            const input = document.getElementById('mesaj-input');
-            const metin = input.value.trim();
-            if (!metin) return;
+            let input = document.getElementById('mesaj-input');
+            let mesaj = input.value.trim();
+            if (!mesaj) return;
 
-            ekranaMesajEkle(metin, 'user-message');
+            ekranaMesajEkle(mesaj, 'user-message');
             input.value = '';
 
             try {
-                const response = await fetch('/chat', {
+                let res = await fetch('/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ mesaj: `(${globalKullaniciAdi}) ` + metin })
+                    body: JSON.stringify({ mesaj: mesaj, kullanıcı: globalKullaniciAdi })
                 });
-                const data = await response.json();
-                ekranaMesajEkle(data.cevap, 'bot-message');
-                botuSeslendir(data.cevap);
-            } catch (e) {
-                ekranaMesajEkle("Bağlantı hatası oluştu kanka.", 'bot-message');
+                let data = await res.json();
+                
+                // Güvenli kontrol: data.cevap varsa bas, yoksa hata mesajı
+                if (data && data.cevap) {
+                    ekranaMesajEkle(data.cevap, 'bot-message');
+                    botuSeslendir(data.cevap);
+                } else {
+                    ekranaMesajEkle("Sunucudan yanıt alamadım kanka.", 'bot-message');
+                }
+            } catch(e) {
+                ekranaMesajEkle("Bağlantı hatası oluştu.", 'bot-message');
             }
         }
 
         function ekranaMesajEkle(metin, sinif) {
-            const div = document.createElement('div');
-            div.className = `message ${sinif}`;
+            let div = document.createElement('div');
+            div.className = 'message ' + sinif;
             div.innerText = metin;
             document.getElementById('chatMessages').appendChild(div);
         }
 
-        function handleKeyPress(e) { if (e.key === 'Enter') mesajGonder(); }
+        function botuSeslendir(metin) {
+            // undefined hatasını önlemek için string kontrolü
+            if (typeof metin !== 'string' || !window.speechSynthesis) return;
+            
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(metin);
+            utterance.lang = 'tr-TR';
+            window.speechSynthesis.speak(utterance);
+        }
     </script>
 </body>
 </html>
