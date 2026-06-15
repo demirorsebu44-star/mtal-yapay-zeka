@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kulu MTAL - Yapay Zekâ Asistanı</title>
+    <title>Kulu MTAL - Yapay Zekâ Asistanıa</title>
     <!-- Google Font, FontAwesome İkonları ve Animate.css Efekt Kütüphanesi -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -121,6 +122,16 @@
             box-shadow: 0 0 15px rgba(0, 223, 216, 0.3);
         }
 
+        /* HATA UYARI METNİ */
+        .error-message {
+            color: #ff0080;
+            font-size: 13.5px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 0, 128, 0.4);
+        }
+
         .basla-btn, .onayla-btn {
             background: linear-gradient(45deg, #ff0080, #7928ca, #00dfd8, #007cf0);
             background-size: 300% 300%;
@@ -222,7 +233,7 @@
             transform: translateX(5px);
         }
 
-        /* SAĞ PANEL: TANITIM MENÜSÜ */
+        /* SAĞ PANEL: TANITIM MENÜSÜ / ADMIN PANELİ */
         .info-menu {
             width: 320px;
             background: rgba(15, 15, 25, 0.8);
@@ -272,6 +283,24 @@
             color: #00dfd8;
             margin-right: 6px;
         }
+
+        /* Admin Aktifleştiğinde Sağ Panel Kartlarının Değişimi */
+        .admin-mode-active .menu-section-title {
+            color: #00dfd8 !important;
+        }
+        .admin-btn {
+            background: rgba(255, 0, 128, 0.2);
+            border: 1px dashed #ff0080;
+            color: #fff;
+            padding: 8px;
+            border-radius: 10px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .admin-btn:hover { background: #ff0080; }
 
         /* ORTA PANEL: ANA SOHBET ALANI */
         .chat-area {
@@ -348,16 +377,7 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        /* Mesaj İçindeki Yüklenen Fotoğraflar */
-        .chat-image {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 15px;
-            margin-top: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* GİRİŞ ALANI VE FOTOĞRAF ÖNİZLEME */
+        /* GİRİŞ ALANI */
         .chat-input-container {
             padding: 25px 30px;
             background: rgba(10, 10, 15, 0.3);
@@ -367,7 +387,6 @@
             gap: 12px;
         }
 
-        /* Görsel Yükleme Önizleme Paneli (Oval Kapsül) */
         .preview-container {
             display: none;
             align-self: flex-start;
@@ -419,7 +438,6 @@
             box-shadow: 0 0 20px rgba(255, 0, 128, 0.25);
         }
 
-        /* Fotoğraf Ekleme İkon Butonu */
         .file-upload-label {
             color: rgba(255, 255, 255, 0.6);
             font-size: 20px;
@@ -430,13 +448,8 @@
             align-items: center;
         }
 
-        .file-upload-label:hover {
-            color: #00dfd8;
-        }
-
-        #foto-input {
-            display: none; /* Gizli input */
-        }
+        .file-upload-label:hover { color: #00dfd8; }
+        #foto-input { display: none; }
 
         #mesaj-input {
             flex: 1;
@@ -481,13 +494,15 @@
             <i class="fa-solid fa-graduation-cap splash-icon-sub"></i>
         </div>
         <h2 class="splash-title animate__animated animate__fadeInDown">Kulu MTAL Yapay Zekâ Laboratuvarı</h2>
-        <p class="splash-subtitle animate__animated animate__fadeInUp" id="splashText">Selam Ebubekir kanka, başlayalım mı?</p>
+        <p class="splash-subtitle animate__animated animate__fadeInUp" id="splashText">Selam kanka, başlayalım mı?</p>
 
         <button class="basla-btn animate__animated animate__bounceIn" id="ilkBaslaBtn" onclick="isimKutusunuAc()">BAŞLA</button>
 
+        <!-- Akıllı Giriş Kutusu -->
         <div class="name-input-box" id="nameInputBox">
             <input type="text" class="name-field" id="kullaniciAdiInput" placeholder="Adınızı ve Soyadınızı Yazın..." onkeypress="handleIsimKeyPress(event)">
-            <button class="onayla-btn" onclick="sistemiSifreliBaslat()">SİSTEME GİRİŞ YAP</button>
+            <p class="error-message" id="inputError">Giriş yapılmadı! Lütfen boş bırakmayın kanka.</p>
+            <button class="onayla-btn" id="sistemButon" onclick="kontrolVeIlerle()">SİSTEME GİRİŞ YAP</button>
         </div>
     </div>
 
@@ -510,7 +525,7 @@
         <!-- ORTA PANEL: ANA SOHBET ALANI -->
         <div class="chat-area">
             <div class="chat-header">
-                <h1><i class="fa-solid fa-graduation-cap" style="color: #00dfd8;"></i> Kulu MTAL Asistanı</h1>
+                <h1><i class="fa-solid fa-graduation-cap" style="color: #00dfd8;"></i> Kulu MTAL Asistanıa</h1>
                 <span class="user-badge" id="kullaniciEtiket">Ziyaretçi Modu</span>
             </div>
 
@@ -519,14 +534,12 @@
             </div>
 
             <div class="chat-input-container">
-                <!-- Fotoğraf Önizleme Yuvası -->
                 <div class="preview-container" id="previewContainer">
                     <img src="" alt="Önizleme" class="preview-image" id="previewImage">
                     <button class="preview-remove-btn" onclick="fotoğrafİptalEt()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
                 <div class="input-wrapper">
-                    <!-- Dosya Seçme Butonu (Ataç İkonu) -->
                     <label for="foto-input" class="file-upload-label">
                         <i class="fa-solid fa-paperclip"></i>
                     </label>
@@ -541,18 +554,18 @@
             </div>
         </div>
 
-        <!-- SAĞ PANEL: PROJE TANITIM MENÜSÜ -->
-        <div class="info-menu">
+        <!-- SAĞ PANEL: PROJE TANITIM MENÜSÜ VEYA GİZLİ ADMIN PANELİ -->
+        <div class="info-menu" id="sagMenuPanel">
             <div class="menu-section">
                 <div class="menu-section-title"><i class="fa-solid fa-circle-info"></i> Proje Hakkında</div>
-                <div class="menu-card">
+                <div class="menu-card" id="projeKart">
                     Bu proje <strong>Kulu MTAL Bilişim Teknolojileri</strong> laboratuvarında geliştirilmiş, Google Gemini API v1 protokolü tabanlı akıllı bir okul asistanıdır.
                 </div>
             </div>
 
             <div class="menu-section">
                 <div class="menu-section-title"><i class="fa-solid fa-database"></i> Okul Veri Bankası</div>
-                <div class="menu-card">
+                <div class="menu-card" id="veriKart">
                     <ul>
                         <li><i class="fa-solid fa-user-graduate"></i> 397 Toplam Öğrenci</li>
                         <li><i class="fa-solid fa-chalkboard-teacher"></i> 49 Uzman Öğretmen</li>
@@ -573,29 +586,70 @@
 
     <!-- SİSTEMİN AKILLI MOTORU -->
     <script>
-        let globalKullaniciAdi = "Ebubekir";
+        let globalKullaniciAdi = "Ziyaretçi";
         let secilenDosya = null;
+        let adminAsamasi = false; // Admin akışında mıyız kontrolü
 
-        // 1. GİRİŞ EKRANI KONTROLLERİ
+        // 1. GİRİŞ EKRANI AKILLI KONTROLLERİ
         function isimKutusunuAc() {
             document.getElementById('ilkBaslaBtn').style.display = 'none';
-            document.getElementById('splashText').innerText = "Lütfen yapay zekânın size hitap edebilmesi için bilgilerinizi girin kanka:";
+            document.getElementById('splashText').innerText = "Yapay zekânın size hitap edebilmesi için bilgilerinizi girin kanka:";
             document.getElementById('nameInputBox').style.display = 'flex';
             document.getElementById('kullaniciAdiInput').focus();
         }
 
         function handleIsimKeyPress(event) {
             if (event.key === 'Enter') {
-                sistemiSifreliBaslat();
+                kontrolVeIlerle();
             }
         }
 
-        function sistemiSifreliBaslat() {
-            const girilenIsim = document.getElementById('kullaniciAdiInput').value.trim();
-            if (girilenIsim !== "") {
-                globalKullaniciAdi = girilenIsim;
-            }
+        function kontrolVeIlerle() {
+            const inputField = document.getElementById('kullaniciAdiInput');
+            const errorText = document.getElementById('inputError');
+            const deger = inputField.value.trim();
 
+            // Eğer ilk aşamadaysak (İsim Girişi)
+            if (!adminAsamasi) {
+                if (deger === "") {
+                    // Boş bırakıldıysa hata göster
+                    errorText.innerText = "Giriş yapılmadı! Lütfen boş bırakmayın kanka.";
+                    errorText.style.display = "block";
+                    return;
+                }
+
+                errorText.style.display = "none";
+
+                // Eğer "admin" yazıldıysa şifre sorma aşamasına geç
+                if (deger.toLowerCase() === "admin") {
+                    adminAsamasi = true;
+                    inputField.value = "";
+                    inputField.placeholder = "Güvenlik Şifresini Girin...";
+                    inputField.type = "password";
+                    document.getElementById('splashText').innerText = "⚙️ Admin yetkilendirmesi algılandı! Lütfen parolayı yaz kanka:";
+                    document.getElementById('sistemButon').innerText = "ŞİFREYİ DOĞRULA";
+                    return;
+                }
+
+                // 1 harf bile olsa normal kullanıcı olarak devam et
+                globalKullaniciAdi = deger;
+                sistemiAnaEkranaTasi(false);
+
+            } else {
+                // Eğer admin aşamasındaysak (Şifre Kontrolü)
+                if (deger === "12345") {
+                    errorText.style.display = "none";
+                    globalKullaniciAdi = "Kurucu Admin";
+                    sistemiAnaEkranaTasi(true);
+                } else {
+                    errorText.innerText = "Hatalı Şifre! Erişim reddedildi kanka.";
+                    errorText.style.display = "block";
+                    inputField.value = "";
+                }
+            }
+        }
+
+        function sistemiAnaEkranaTasi(isAdmin) {
             const mainIcon = document.querySelector('.splash-icon-main');
             const subIcon = document.querySelector('.splash-icon-sub');
             const splashScreen = document.getElementById('splashScreen');
@@ -612,9 +666,43 @@
                 splashScreen.classList.add('splash-exit');
                 appContainer.classList.add('app-active');
 
-                document.getElementById('kullaniciEtiket').innerText = `Kullanıcı: ${globalKullaniciAdi}`;
-                ekranaMesajEkle(`Sisteme başarıyla giriş yaptın ${globalKullaniciAdi} kanka! Kulu MTAL Yapay Zekâ Motoru şu an senin emirlerine amade. Bana okul verilerini ya da bir fotoğraf atıp onun hakkında sorular sorabilirsin!`, 'bot-message');
+                // Kullanıcı etiketini güncelle
+                if (isAdmin) {
+                    document.getElementById('kullaniciEtiket').innerText = `⚡ Yetki: ${globalKullaniciAdi}`;
+                    document.getElementById('kullaniciEtiket').style.color = "#ff0080";
+                    document.getElementById('kullaniciEtiket').style.borderColor = "#ff0080";
+                    adminArayuzunuEtkinlestir();
+                } else {
+                    document.getElementById('kullaniciEtiket').innerText = `Kullanıcı: ${globalKullaniciAdi}`;
+                }
+                
+                let karsilama = isAdmin 
+                    ? `Sisteme Root Admin olarak tam yetkiyle erişim sağladın kanka! Tüm gizli modüller ve sunucu altyapısı etkinleştirildi.`
+                    : `Sisteme başarıyla giriş yaptın ${globalKullaniciAdi} kanka! Kulu MTAL Yapay Zekâ Motoru şu an senin emirlerine amade.`;
+                
+                ekranaMesajEkle(karsilama, 'bot-message');
+                botuSeslendir(karsilama);
             }, 600);
+        }
+
+        // ADMİN ARAYÜZÜNÜ TETİKLEYEN ÖZEL FONKSİYON
+        function adminArayuzunuEtkinlestir() {
+            const sagMenu = document.getElementById('sagMenuPanel');
+            sagMenu.classList.add('admin-mode-active');
+            
+            // Sağ taraftaki menü içeriklerini admin kontrol butonlarına dönüştürüyoruz
+            document.getElementById('projeKart').innerHTML = `
+                <span style="color:#00dfd8; font-weight:600;">[SİSTEM LOGLARI AKTİF]</span><br>
+                Terminal bağlantısı stabil.<br>
+                Gemini v1 API: Çevrimiçi<br>
+                <button class="admin-btn" onclick="alert('API Yeniden Başlatılıyor...')">Gemini API Resetle</button>
+            `;
+            
+            document.getElementById('veriKart').innerHTML = `
+                <span style="color:#00dfd8; font-weight:600;">[SUNUCU YÖNETİMİ]</span>
+                <button class="admin-btn" onclick="alert('Veritabanı yedeği alındı!')">SQL Veritabanı Yedekle</button>
+                <button class="admin-btn" style="background:rgba(0,223,218,0.2); border-color:#00dfd8;" onclick="alert('Önbellek temizlendi kanka.')">Cache Temizle</button>
+            `;
         }
 
         // 2. FOTOĞRAF SEÇME VE ÖNİZLEME İŞLEMLERİ
@@ -622,12 +710,10 @@
             if (input.files && input.files[0]) {
                 secilenDosya = input.files[0];
                 const reader = new FileReader();
-
                 reader.onload = function(e) {
                     document.getElementById('previewImage').src = e.target.result;
                     document.getElementById('previewContainer').style.display = 'block';
                 }
-
                 reader.readAsDataURL(secilenDosya);
             }
         }
@@ -638,7 +724,7 @@
             document.getElementById('previewContainer').style.display = 'none';
         }
 
-        // 3. MESAJLAŞMA VE VERİ AKTARIMI (DOSYA DESTEKLİ)
+        // 3. MESAJLAŞMA VE VERİ AKTARIMI
         const chatMessages = document.getElementById('chatMessages');
         const mesajInput = document.getElementById('mesaj-input');
         const ozetListesi = document.getElementById('ozetListesi');
@@ -651,25 +737,18 @@
 
         function mesajGonder() {
             const mesajMetni = mesajInput.value.trim();
-
-            // Eğer hem mesaj boşsa hem de dosya seçilmediyse hiçbir şey yapma
             if (mesajMetni === '' && !secilenDosya) return;
 
-            // FormData nesnesi oluşturarak verileri paketliyoruz
             const formData = new FormData();
-
-            // Python'a ismimizle birlikte mesajı paketle
             formData.append('mesaj', `(Kullanıcı adı: ${globalKullaniciAdi}) ` + mesajMetni);
 
             if (secilenDosya) {
                 formData.append('fotoğraf', secilenDosya);
             }
 
-            // Ekrana kullanıcının attığı mesajı/görseli bas
             ekranaKullaniciMesajiBas(mesajMetni, secilenDosya);
-
-            // Input alanlarını hemen sıfırla
             mesajInput.value = '';
+            
             if(mesajMetni !== '') {
                 ozetPanelineEkle(mesajMetni);
             } else if(secilenDosya) {
@@ -677,40 +756,37 @@
             }
             fotoğrafİptalEt();
 
-            // API'ye Gönderim (JSON yerine multipart/form-data gidiyor artık)
             fetch('/chat', {
                 method: 'POST',
-                body: formData // İçinde hem metin hem de dosya barındırır
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 ekranaMesajEkle(data.cevap, 'bot-message');
+                botuSeslendir(data.cevap);
             })
             .catch(error => {
                 console.error('Hata:', error);
-                ekranaMesajEkle('Bağlantı kesildi kanka, terminali kontrol et veya backend kodunun dosya altyapısını kontrol et.', 'bot-message');
+                const hataMesaji = 'Bağlantı kesildi kanka, terminali kontrol et.';
+                ekranaMesajEkle(hataMesaji, 'bot-message');
+                botuSeslendir(hataMesaji);
             });
         }
 
         function ekranaKullaniciMesajiBas(metin, dosya) {
             const mesajDiv = document.createElement('div');
             mesajDiv.className = 'message user-message';
-
-            // Eğer metin varsa ekle
             if (metin !== '') {
                 const textSpan = document.createElement('span');
                 textSpan.innerText = metin;
                 mesajDiv.appendChild(textSpan);
             }
-
-            // Eğer dosya yüklenmişse görsel olarak balonun içine bas
             if (dosya) {
                 const img = document.createElement('img');
                 img.src = document.getElementById('previewImage').src;
                 img.className = 'chat-image';
                 mesajDiv.appendChild(img);
             }
-
             chatMessages.appendChild(mesajDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -726,15 +802,29 @@
         function ozetPanelineEkle(metin) {
             let temizMetin = metin.replace(/\(Kullanıcı adı:.*?\)\s*/, "");
             let ozetBaslik = temizMetin.length > 18 ? temizMetin.substring(0, 18) + '...' : temizMetin;
-
             const yeniOzet = document.createElement('li');
             yeniOzet.className = 'ozet-item';
             yeniOzet.innerHTML = `<i class="fa-regular fa-comment"></i> ${ozetBaslik}`;
-
             if (ozetListesi.firstChild) {
                 ozetListesi.insertBefore(yeniOzet, ozetListesi.firstChild);
             } else {
                 ozetListesi.appendChild(yeniOzet);
+            }
+        }
+
+        // BOTA ENTEGRE SESLENDİRME MOTORU (TTS)
+        function botuSeslendir(metin) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let temizMetin = metin.replace(/[\`\*\_#]/g, ""); 
+                const utterance = new SpeechSynthesisUtterance(temizMetin);
+                utterance.lang = 'tr-TR';
+                utterance.rate = 1.15;
+                utterance.pitch = 1.0;
+                const sesler = window.speechSynthesis.getVoices();
+                const turkceSes = sesler.find(ses => ses.lang.includes('tr'));
+                if (turkceSes) utterance.voice = turkceSes;
+                window.speechSynthesis.speak(utterance);
             }
         }
     </script>
