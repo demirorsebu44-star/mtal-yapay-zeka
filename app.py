@@ -5,7 +5,7 @@ from groq import Groq
 app = Flask(__name__)
 
 # Kendi API anahtarını kullanmaya devam et
-API_KEY = "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" 
+API_KEY = "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" 
 
 @app.route('/')
 def index():
