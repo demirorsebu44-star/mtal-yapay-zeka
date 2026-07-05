@@ -1,4 +1,4 @@
-SEND EGİŞTİRSENE AMK 
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -732,34 +732,22 @@ SEND EGİŞTİRSENE AMK
             }
             fotoğrafİptalEt();
 
-            // 'formData' ile uğraşma, metin gönderiyorsan şunu kullan:
-const mesajIcerik = mesajInput.value;
-
-fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=BURAYA_API_KEYINI_YAZ', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        "contents": [{
-            "parts": [{ "text": mesajIcerik }]
-        }]
-    })
-})
-.then(response => response.json())
-.then(data => {
-    // Gemini'den gelen cevabı ayıkla
-    const cevap = data.candidates[0].content.parts[0].text;
-    
-    ekranaMesajEkle(cevap, 'bot-message');
-    botuSeslendir(cevap);
-})
-.catch(error => {
-    console.error('Hata:', error);
-    const hataMesaji = 'API bağlantısı patladı, KEY\'i kontrol et.';
-    ekranaMesajEkle(hataMesaji, 'bot-message');
-    botuSeslendir(hataMesaji);
-});
+            fetch('/chat', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                ekranaMesajEkle(data.cevap, 'bot-message');
+                botuSeslendir(data.cevap);
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                const hataMesaji = 'Bağlantı kesildi kanka, terminali kontrol et.';
+                ekranaMesajEkle(hataMesaji, 'bot-message');
+                botuSeslendir(hataMesaji);
+            });
+        }
 
         function ekranaKullaniciMesajiBas(metin, dosya) {
             const mesajDiv = document.createElement('div');
