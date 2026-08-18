@@ -7,7 +7,7 @@
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Marked.js (Markdown Desteği İçin) -->
+    <!-- Marked.js (Markdown Desteği) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
@@ -66,7 +66,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
         .login-card {
@@ -142,9 +142,9 @@
         .chat-app {
             position: relative;
             z-index: 1;
-            width: 95%;
-            max-width: 900px;
-            height: 90vh;
+            width: 90%;
+            max-width: 850px;
+            height: 88vh;
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -152,10 +152,11 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .header {
-            padding: 20px 30px;
+            padding: 18px 25px;
             background: rgba(30, 41, 59, 0.6);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
@@ -248,7 +249,7 @@
         .message {
             display: flex;
             gap: 12px;
-            max-width: 85%;
+            max-width: 80%;
         }
 
         .message.user {
@@ -279,7 +280,6 @@
             line-height: 1.6;
             color: #e2e8f0;
             word-break: break-word;
-            overflow-wrap: anywhere;
         }
 
         .message.user .msg-content {
@@ -292,11 +292,8 @@
             border-top-left-radius: 4px;
         }
 
-        .msg-content ul, .msg-content ol { margin-left: 20px; margin-top: 5px; }
-        .msg-content code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-
         .chat-footer {
-            padding: 20px 30px;
+            padding: 18px 25px;
             background: rgba(30, 41, 59, 0.6);
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
@@ -542,8 +539,6 @@
             msgDiv.className = `message ${sender}`;
 
             const iconClass = sender === 'bot' ? 'fa-solid fa-robot' : 'fa-solid fa-user';
-            
-            // Markdown Parse İşlemi
             const parsedText = sender === 'bot' ? marked.parse(text) : text;
 
             msgDiv.innerHTML = `
@@ -595,7 +590,6 @@
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                // HTML etiketlerini temizleyip sadece metni seslendir
                 const cleanText = text.replace(/<[^>]*>?/gm, '');
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = 'tr-TR';
