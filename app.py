@@ -15,7 +15,6 @@ def chat():
         if not user_message:
             return jsonify({'cevap': 'Mesaj boş kanka!'}), 400
 
-        # Render üzerindeki GEMINI_API_KEY değişkenini okur
         api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
             return jsonify({'cevap': 'GEMINI_API_KEY Render üzerinde bulunamadı!'}), 500
@@ -23,7 +22,7 @@ def chat():
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.0-flash',
             contents=user_message,
         )
 
