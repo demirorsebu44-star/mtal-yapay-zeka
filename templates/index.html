@@ -7,6 +7,8 @@
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Marked.js (Markdown Desteği İçin) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         * {
@@ -27,7 +29,6 @@
             position: relative;
         }
 
-        /* Ambient Gradient Background Blobs */
         .ambient-bg {
             position: absolute;
             width: 100%;
@@ -40,7 +41,7 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.4;
+            opacity: 0.35;
             animation: float 10s infinite alternate ease-in-out;
         }
 
@@ -53,7 +54,6 @@
             100% { transform: translate(30px, 50px) scale(1.1); }
         }
 
-        /* Login Overlay Modal */
         #loginOverlay {
             position: fixed;
             top: 0;
@@ -66,11 +66,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 40px;
             border-radius: 24px;
@@ -78,12 +78,6 @@
             max-width: 420px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes cardAppear {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .login-card i.logo-icon {
@@ -95,7 +89,7 @@
         }
 
         .login-card h2 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             margin-bottom: 8px;
         }
@@ -106,26 +100,16 @@
             margin-bottom: 25px;
         }
 
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
         .input-group input {
             width: 100%;
             padding: 14px 18px;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             color: #fff;
             font-size: 15px;
             outline: none;
-            transition: all 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            margin-bottom: 15px;
         }
 
         .login-btn {
@@ -139,12 +123,10 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6);
         }
 
         .shake {
@@ -157,27 +139,24 @@
             75% { transform: translateX(10px); }
         }
 
-        /* Main App Container */
         .chat-app {
             position: relative;
             z-index: 1;
             width: 95%;
             max-width: 900px;
             height: 90vh;
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
-        /* Header */
         .header {
             padding: 20px 30px;
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(30, 41, 59, 0.6);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
@@ -200,14 +179,18 @@
             align-items: center;
             font-weight: 800;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .user-details h3 {
             font-size: 16px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .user-details span {
+        .user-details span.status {
             font-size: 12px;
             color: #10b981;
             display: flex;
@@ -215,7 +198,7 @@
             gap: 5px;
         }
 
-        .user-details span::before {
+        .user-details span.status::before {
             content: '';
             width: 8px;
             height: 8px;
@@ -253,7 +236,6 @@
             border-color: #3b82f6;
         }
 
-        /* Chat Body */
         .chat-body {
             flex: 1;
             padding: 25px 30px;
@@ -261,19 +243,12 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            scroll-behavior: smooth;
         }
 
         .message {
             display: flex;
             gap: 12px;
-            max-width: 80%;
-            animation: msgFade 0.3s ease-out forwards;
-        }
-
-        @keyframes msgFade {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            max-width: 85%;
         }
 
         .message.user {
@@ -292,13 +267,8 @@
             flex-shrink: 0;
         }
 
-        .message.bot .msg-avatar {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-        }
-
-        .message.user .msg-avatar {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-        }
+        .message.bot .msg-avatar { background: linear-gradient(135deg, #6366f1, #a855f7); }
+        .message.user .msg-avatar { background: linear-gradient(135deg, #2563eb, #3b82f6); }
 
         .msg-content {
             background: rgba(30, 41, 59, 0.8);
@@ -308,8 +278,8 @@
             font-size: 15px;
             line-height: 1.6;
             color: #e2e8f0;
-            white-space: pre-wrap;
             word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .message.user .msg-content {
@@ -322,10 +292,12 @@
             border-top-left-radius: 4px;
         }
 
-        /* Input Footer */
+        .msg-content ul, .msg-content ol { margin-left: 20px; margin-top: 5px; }
+        .msg-content code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+
         .chat-footer {
             padding: 20px 30px;
-            background: rgba(30, 41, 59, 0.5);
+            background: rgba(30, 41, 59, 0.6);
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             gap: 12px;
@@ -340,11 +312,6 @@
             color: #fff;
             font-size: 15px;
             outline: none;
-            transition: all 0.3s;
-        }
-
-        .chat-input:focus {
-            border-color: #3b82f6;
         }
 
         .send-btn {
@@ -355,19 +322,12 @@
             height: 50px;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 18px;
         }
 
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
-        }
-
-        /* Admin Badge Special Glow */
         .admin-badge {
             background: linear-gradient(135deg, #f59e0b, #ef4444);
             color: #fff;
@@ -376,25 +336,13 @@
             padding: 2px 8px;
             border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-left: 6px;
         }
 
-        /* Typing Dots Animation */
-        .typing-dots {
-            display: flex;
-            gap: 5px;
-            padding: 8px 4px;
-        }
-
+        .typing-dots { display: flex; gap: 5px; padding: 8px 4px; }
         .typing-dots span {
-            width: 8px;
-            height: 8px;
-            background: #94a3b8;
-            border-radius: 50%;
+            width: 8px; height: 8px; background: #94a3b8; border-radius: 50%;
             animation: dotPulse 1.4s infinite ease-in-out both;
         }
-
         .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
 
@@ -406,36 +354,33 @@
 </head>
 <body>
 
-    <!-- Ambient BG -->
     <div class="ambient-bg">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
 
-    <!-- Login / Welcome Screen Overlay -->
     <div id="loginOverlay">
         <div class="login-card" id="loginCard">
             <i class="fa-solid fa-robot logo-icon"></i>
             <h2 id="loginTitle">MTAL Yapay Zekâ</h2>
-            <p id="loginSub">Devam etmek için lütfen adını gir kanka.</p>
+            <p id="loginSub">Devam etmek için adını gir kanka.</p>
             
             <div class="input-group">
-                <input type="text" id="usernameInput" placeholder="Adın veya Kullanıcı Adın..." autocomplete="off">
+                <input type="text" id="usernameInput" placeholder="Adın..." autocomplete="off">
             </div>
             
             <button class="login-btn" onclick="handleLoginStep()">Giriş Yap <i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- Main Chat App -->
     <div class="chat-app">
         <div class="header">
             <div class="user-info">
                 <div class="avatar" id="headerAvatar">A</div>
                 <div class="user-details">
                     <h3 id="headerUserName">Kullanıcı <span id="adminBadgeSlot"></span></h3>
-                    <span>Çevrimiçi | Gemini 2.5 Flash</span>
+                    <span class="status">Çevrimiçi | Gemini 2.5 Flash</span>
                 </div>
             </div>
             <div class="header-actions">
@@ -448,12 +393,10 @@
             </div>
         </div>
 
-        <div class="chat-body" id="chatBody">
-            <!-- Messages will be injected here -->
-        </div>
+        <div class="chat-body" id="chatBody"></div>
 
         <div class="chat-footer">
-            <input type="text" class="chat-input" id="chatInput" placeholder="Bir şeyler sor veya yaz..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Bir şeyler sor..." onkeydown="if(event.key==='Enter') sendMessage()">
             <button class="send-btn" onclick="sendMessage()">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -461,12 +404,10 @@
     </div>
 
     <script>
-        // Web Audio API Sound Synthesizer (No external MP3 needed!)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
@@ -488,30 +429,14 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.15);
-            } else if (type === 'admin') {
-                // Fanfare sound for admin
-                const notes = [523.25, 659.25, 783.99, 1046.50];
-                notes.forEach((freq, idx) => {
-                    const o = audioCtx.createOscillator();
-                    const g = audioCtx.createGain();
-                    o.connect(g);
-                    g.connect(audioCtx.destination);
-                    o.frequency.value = freq;
-                    g.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.08);
-                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.2);
-                    o.start(audioCtx.currentTime + idx * 0.08);
-                    o.stop(audioCtx.currentTime + idx * 0.08 + 0.2);
-                });
             }
         }
 
-        // Global State
         let currentUser = "";
         let isAdmin = false;
         let isPassStep = false;
         let ttsEnabled = true;
 
-        // Login Logic
         function handleLoginStep() {
             const input = document.getElementById('usernameInput');
             const val = input.value.trim();
@@ -523,7 +448,6 @@
 
             if (!isPassStep) {
                 if (val.toLowerCase() === 'admin') {
-                    // Switch to password step
                     isPassStep = true;
                     document.getElementById('loginTitle').innerText = "Admin Girişi";
                     document.getElementById('loginSub').innerText = "Lütfen yönetici şifresini girin:";
@@ -532,16 +456,13 @@
                     input.type = "password";
                     playSound('pop');
                 } else {
-                    // Normal User Entry
                     currentUser = val;
                     completeLogin();
                 }
             } else {
-                // Check Admin Password
                 if (val === '55963') {
                     isAdmin = true;
                     currentUser = "Ebubekir Kanka";
-                    playSound('admin');
                     completeLogin();
                 } else {
                     shakeCard();
@@ -560,10 +481,8 @@
             playSound('pop');
             const overlay = document.getElementById('loginOverlay');
             overlay.style.opacity = '0';
-            overlay.style.transform = 'scale(1.05)';
-            setTimeout(() => overlay.style.display = 'none', 600);
+            setTimeout(() => overlay.style.display = 'none', 500);
 
-            // Update UI Header
             document.getElementById('headerUserName').childNodes[0].nodeValue = currentUser + " ";
             document.getElementById('headerAvatar').innerText = currentUser.charAt(0).toUpperCase();
 
@@ -571,7 +490,6 @@
                 document.getElementById('adminBadgeSlot').innerHTML = '<span class="admin-badge">Admin 👑</span>';
             }
 
-            // Welcome Message
             const welcomeMsg = isAdmin 
                 ? "Hoş geldin Ebubekir Kanka! 👑 Yönetici modunda bağlandın. Tüm sistem senin emrinde!" 
                 : `Selam ${currentUser}! MTAL Yapay Zekâ Asistanına hoş geldin. Sana nasıl yardımcı olabilirim?`;
@@ -580,7 +498,6 @@
             if (ttsEnabled) speakText(welcomeMsg);
         }
 
-        // Chat Messaging
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
@@ -591,7 +508,6 @@
             addMessage(text, 'user');
             input.value = '';
 
-            // Show Typing Indicator
             const typingId = addTypingIndicator();
 
             try {
@@ -610,9 +526,7 @@
                 playSound('bot');
                 addMessage(reply, 'bot');
 
-                if (ttsEnabled) {
-                    speakText(reply);
-                }
+                if (ttsEnabled) speakText(reply);
 
             } catch (err) {
                 removeMessage(typingId);
@@ -629,9 +543,12 @@
 
             const iconClass = sender === 'bot' ? 'fa-solid fa-robot' : 'fa-solid fa-user';
             
+            // Markdown Parse İşlemi
+            const parsedText = sender === 'bot' ? marked.parse(text) : text;
+
             msgDiv.innerHTML = `
                 <div class="msg-avatar"><i class="${iconClass}"></i></div>
-                <div class="msg-content">${text}</div>
+                <div class="msg-content">${parsedText}</div>
             `;
 
             chatBody.appendChild(msgDiv);
@@ -649,9 +566,7 @@
             msgDiv.innerHTML = `
                 <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
                 <div class="msg-content">
-                    <div class="typing-dots">
-                        <span></span><span></span><span></span>
-                    </div>
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
                 </div>
             `;
 
@@ -672,8 +587,7 @@
 
         function toggleTTS() {
             ttsEnabled = !ttsEnabled;
-            const btn = document.getElementById('ttsToggleBtn');
-            btn.classList.toggle('active', ttsEnabled);
+            document.getElementById('ttsToggleBtn').classList.toggle('active', ttsEnabled);
             playSound('pop');
             if (!ttsEnabled) window.speechSynthesis.cancel();
         }
@@ -681,23 +595,17 @@
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
+                // HTML etiketlerini temizleyip sadece metni seslendir
+                const cleanText = text.replace(/<[^>]*>?/gm, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = 'tr-TR';
-                utterance.rate = 1.0;
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Keypress Listener for Login
         document.getElementById('usernameInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') handleLoginStep();
         });
     </script>
 </body>
 </html>
-
-
-### Yapman Gerekenler:
-1. VS Code'da `templates/index.html` dosyasının içindekileri silip yukarıdaki yeni kodu yapıştır ve kaydet.
-2. GitHub'a git -> `templates/index.html` dosyasını güncelle ve **Commit changes** de.
-3. Render otomatik olarak birkaç saniye içinde siteni güncelleyecek. [mtal-yapay-zeka.onrender.com](https://mtal-yapay-zeka.onrender.com) adresinden girip dene kanka!
