@@ -21,8 +21,9 @@ def chat():
 
         client = genai.Client(api_key=api_key)
 
+        # En stabil resmi model adı
         response = client.models.generate_content(
-            model='gemini-3.6-flash',
+            model='gemini-2.5-flash',
             contents=user_message,
         )
 
