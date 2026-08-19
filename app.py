@@ -17,17 +17,23 @@ def index():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        # JSON verisini başlık ne olursa olsun esnek şekilde çeker
-        data = request.get_json(force=True, silent=True) or {}
-        user_message = data.get("message", "")
+        # JSON veya Form verisini çek
+        data = request.get_json(force=True, silent=True) or request.form or {}
+        
+        # Frontend'den gelebilecek tüm olası kelimeleri dene
+        user_message = data.get("message") or data.get("prompt") or data.get("text") or data.get("user_message") or ""
 
-        if not user_message:
+        # Eğer veri string değilse string'e çevir
+        if isinstance(user_message, dict):
+            user_message = str(user_message)
+
+        if not str(user_message).strip():
             return jsonify({"error": "Mesaj boş olamaz."}), 400
 
         # Gemini model çağrısı
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=user_message,
+            contents=str(user_message),
         )
 
         return jsonify({"response": response.text})
