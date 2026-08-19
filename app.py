@@ -17,13 +17,14 @@ def index():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        data = request.get_json()
+        # JSON verisini başlık ne olursa olsun esnek şekilde çeker
+        data = request.get_json(force=True, silent=True) or {}
         user_message = data.get("message", "")
 
         if not user_message:
             return jsonify({"error": "Mesaj boş olamaz."}), 400
 
-        # Doğru model adı ve virgüllerle eksiksiz yapı
+        # Gemini model çağrısı
         response = client.models.generate_content(
             model='gemini-1.5-flash',
             contents=user_message,
